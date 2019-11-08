@@ -13,9 +13,10 @@ public class GameNode
     {
         parent = p;
         value = val;
-        Match colorandpos = new Regex(@"(B|W)\[(.*?)\]").Match(val);
-        color =colorandpos.Groups[1].Value;
-        position =colorandpos.Groups[2].Value;
+//        Match colorandpos = new Regex(@"(B|W)\[(.*?)\]").Match(val);
+
+        color =  "PLACE HOLDER"; //colorandpos.Groups[1].Value;
+        position ="PLACE HOLDER";//colorandpos.Groups[2].Value;
         childrens = new List<GameNode>();
     }
     public GameNode GetParent()

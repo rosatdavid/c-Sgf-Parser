@@ -57,12 +57,12 @@ private int createTree(string tree2,int index  = 0,GameNode parent = null)
         {
             maxNodeIndex = matchFirstParentesis.Index;
         }
-
+        string partTreeForNodes = tree.Substring(0,maxNodeIndex);
         
         //string partOfStringToWorkWith = tree.Substring(0, maxNodeIndex);
             // Debug.Log("tree lenght: "+ tree.Length +" : "+index + " : "+(maxNodeIndex-index));
             
-            MatchCollection matches = node.Matches(tree);
+            MatchCollection matches = node.Matches(partTreeForNodes);
             foreach(Match match in matches)
             {
                 if(match.Index+match.Length > maxNodeIndex)
@@ -100,11 +100,11 @@ private int createTree(string tree2,int index  = 0,GameNode parent = null)
                 }
 
             }
-        
-        if(matches.Count == 0)
-        {
+        else
+        { 
             loop = false;
         }
+
     }
     return index;
 }  
@@ -149,10 +149,14 @@ private int createTree(string tree2,int index  = 0,GameNode parent = null)
         }
         return retour;
     }
-    public bool CompareWithSgf(string sgf,GameNode root)
+    public string exportSgf()
     {
-        string finalsgf ="("+MakeSgf(root.GetChidrens()[0])+")";
-        Debug.Log(finalsgf);
+        return "("+MakeSgf(root.GetChidrens()[0])+")";
+    } 
+    public bool CompareWithSgf(string sgf)
+    {
+        string finalsgf =exportSgf();
+       // Debug.Log(finalsgf);
         if (finalsgf == sgf)
         {
              Debug.Log("input and output match");
@@ -205,7 +209,7 @@ private int createTree(string tree2,int index  = 0,GameNode parent = null)
         root =  new GameNode(null,"root");
         int firstNodeIndex =node.Match(sgf).Index;
         createTree(sgf,0,root);
-        CompareWithSgf(sgf,root);
+        //CompareWithSgf(sgf,root);
         //Debug.Log(MakeSgf(root));
 
         return true;
