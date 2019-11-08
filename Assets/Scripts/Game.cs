@@ -37,32 +37,34 @@ public class Game
     {
         return root;
     }
-private int createTree(string tree2,int index  = 0,GameNode parent = null)
+private int createTree(string tree,int index  = 0,GameNode parent = null)
 {
     //Regex insideOfParentesis  = new Regex(@"\((.*)\)"); 
 
     Regex node = new Regex(@"(\b[A-Z]{1,}\[.*?\]){1,}");
     Regex firstParentesis =  new Regex(@"(\()|(\))");
     bool loop = true;
-    int childIndex = 0;
+    
     int maxNodeIndex =0;
+    //int childIndex = 0;
     while(loop)
     {
         
-        string tree = tree2.Substring(index+childIndex);
-        
+       // string tree = tree2.Substring(index+childIndex);
+       //index = index + childIndex;
+        //childIndex =0;
         maxNodeIndex = tree.Length;
-        Match matchFirstParentesis = firstParentesis.Match(tree);
+        Match matchFirstParentesis = firstParentesis.Match(tree,index);
         if(matchFirstParentesis.Success)
         {
             maxNodeIndex = matchFirstParentesis.Index;
         }
-        string partTreeForNodes = tree.Substring(0,maxNodeIndex);
+        //string partTreeForNodes = tree.Substring(0,maxNodeIndex);
         
         //string partOfStringToWorkWith = tree.Substring(0, maxNodeIndex);
             // Debug.Log("tree lenght: "+ tree.Length +" : "+index + " : "+(maxNodeIndex-index));
             
-            MatchCollection matches = node.Matches(partTreeForNodes);
+            MatchCollection matches = node.Matches(tree,index);
             foreach(Match match in matches)
             {
                 if(match.Index+match.Length > maxNodeIndex)
@@ -83,12 +85,12 @@ private int createTree(string tree2,int index  = 0,GameNode parent = null)
 
                 
                 string comp = matchFirstParentesis.Value;
-                childIndex = childIndex+maxNodeIndex+1;
+                int childIndex  = maxNodeIndex+1;
                 maxNodeIndex = 0;
                 if(comp == "(")
                 {
                     
-                    childIndex = childIndex +createTree(tree2,index+childIndex, parent);
+                    index =  createTree(tree,childIndex, parent);
                     
                 }else if(comp == ")")
                 {
