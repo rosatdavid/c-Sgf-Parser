@@ -48,7 +48,7 @@ public string OpenSgfFile()
        testsSgf.Add("(;GM[1]FF[4]CA[UTF-8]AP[Sabaki:0.43.3]KM[7.5]SZ[19]DT[2019-11-06];B[as](;W[ar])(;W[br])(;W[cr])(;W[dr])(;W[er]))");
        testsSgf.Add("(;GM[1]FF[4]CA[UTF-8]AP[Sabaki:0.43.3]KM[7.5]SZ[19]DT[2019-11-06];B[as];W[ar];B[aq](;W[ap])(;W[bq](;B[bp];W[bo];B[bn])(;B[cq];W[cp](;B[co];W[cn])(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))))))");
        testsSgf.Add("(;GM[1]FF[4]CA[UTF-8]AP[Sabaki:0.43.3]KM[7.5]SZ[19]DT[2019-11-06];B[as];W[ar];B[aq](;W[ap])(;W[bq](;B[bp];W[bo];B[bn])(;B[cq];W[cp](;B[co];W[cn])(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn])))(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))))(;B[cq];W[cp](;B[co];W[cn])(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn])))(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn])))))(;W[bq](;B[bp];W[bo];B[bn])(;B[cq];W[cp](;B[co];W[cn])(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn])))(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))))(;B[cq];W[cp](;B[co];W[cn])(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn])))(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))))))");
-      
+      testsSgf.Add(OpenSgfFile());
 
         //OpenSgfFile();
 
@@ -63,6 +63,7 @@ public string OpenSgfFile()
         }
       
                 
+     /* 
      string sgf = OpenSgfFile();
      Game game = new Game(sgf);
      string finalSgf =game.exportSgf();
@@ -74,8 +75,9 @@ public string OpenSgfFile()
     {
         Debug.Log(Ex.ToString());
     }
-     
+        */
     }
+ 
 
     // Update is called once per frame
     void Update()

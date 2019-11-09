@@ -41,7 +41,8 @@ private int createTree(string tree,int index  = 0,GameNode parent = null)
 {
     //Regex insideOfParentesis  = new Regex(@"\((.*)\)"); 
 
-    Regex node = new Regex(@"(\b[A-Z]{1,}\[.*?\]){1,}");
+    //Regex node = new Regex(@";(\b[A-Z]{0,2}\[.*?\]{1,}(\[.*?\]){0,}){1,}");
+    Regex node = new Regex(@"(;.*?((?=;)|(?=\()|(?=\))|($)))");
     Regex firstParentesis =  new Regex(@"(\()|(\))");
     bool loop = true;
     
@@ -137,7 +138,7 @@ private int createTree(string tree,int index  = 0,GameNode parent = null)
         string retour;
         List<GameNode> childrens = node.GetChidrens();
        // Debug.Log("Node :"+node.GetValue() +"has "+childrens.Count+" childs");
-        retour =";"+node.GetValue();
+        retour =node.GetValue();
         if(childrens.Count > 1)
         {
             foreach (var ch in childrens)
@@ -202,7 +203,7 @@ private int createTree(string tree,int index  = 0,GameNode parent = null)
         user = new Regex(@"US\[(.*?)\]").Match(sgf).Groups[1].Value;
         annotation = new Regex(@"AN\[(.*?)\]").Match(sgf).Groups[1].Value;  
         copyright =  new Regex(@"CP\[(.*?)\]").Match(sgf).Groups[1].Value;
-
+         
         
 
 
