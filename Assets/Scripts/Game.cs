@@ -37,13 +37,17 @@ public class Game
     {
         return root;
     }
-private int createTree(string tree,int index  = 0,GameNode parent = null)
+private int createTree(ref string tree,int index  = 0,GameNode parent = null)
 {
     //Regex insideOfParentesis  = new Regex(@"\((.*)\)"); 
 
-    //Regex node = new Regex(@";(\b[A-Z]{0,2}\[.*?\]{1,}(\[.*?\]){0,}){1,}");
-    Regex node = new Regex(@"(;.*?((?=;)|(?=\()|(?=\))|($)))");
+  
+    //Regex node = new Regex(@"(;[A-Z].*?\]((?=;)|(?=\()|(?=\))|($)))");
+    Regex node = new Regex(@"(;[A-Z]{1,2}\[.*?\]((?=;)|(?=\()|(?=\))|$))");
+
     Regex firstParentesis =  new Regex(@"(\()|(\))");
+    //Regex firstParentesis =  new Regex(@"^.*?(\(|\))");
+    
     bool loop = true;
     
     int maxNodeIndex =0;
@@ -91,7 +95,7 @@ private int createTree(string tree,int index  = 0,GameNode parent = null)
                 if(comp == "(")
                 {
                     
-                    index =  createTree(tree,childIndex, parent);
+                    index =  createTree(ref tree,childIndex, parent);
                     
                 }else if(comp == ")")
                 {
@@ -211,7 +215,11 @@ private int createTree(string tree,int index  = 0,GameNode parent = null)
         Regex node = new Regex(@"(\b[A-Z]{1,}\[.*?\]){1,}");
         root =  new GameNode(null,"root");
         int firstNodeIndex =node.Match(sgf).Index;
-        createTree(sgf,0,root);
+         float start =Time.realtimeSinceStartup;
+        createTree(ref sgf,0,root);
+        float now = Time.realtimeSinceStartup;
+        float finish =now-start;
+        Debug.Log("createTree take"+finish+"secondes");
         //CompareWithSgf(sgf,root);
         //Debug.Log(MakeSgf(root));
 
