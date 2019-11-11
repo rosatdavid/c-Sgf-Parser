@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Text.RegularExpressions;
@@ -26,18 +27,37 @@ public class Game
     private string user;
     private string annotation;
     private string copyright;
+    private string m_sgf;
+    private GameNode m_root;
+    private List<GameNode> m_listGameNode;
+private List<GameNode> CleanSgfForParser(char charToremplaceNode ='n')
+{
+    List<GameNode> listNode = new List<GameNode>();
+     Regex node = new Regex(@"(;[A-Z]{1,2}\[.*?\]((?=;)|(?=\()|(?=\))|$))");
+     MatchCollection matches = node.Matches(m_sgf);
+     foreach(Match m in matches)
+     {
+         listNode.Add(new GameNode(m.Groups[1].Value));
+     }
+    m_sgf = node.Replace(m_sgf,charToremplaceNode.ToString());
+     return listNode;
+}
 
-    private GameNode root;
+
     public Game(string sgf)
     {
-        ParseSgf(sgf);
+        m_sgf = sgf;
+        m_listGameNode =CleanSgfForParser();
+        ParseSgf();
+        
     }
 
     public GameNode GetRoot()
     {
-        return root;
+        return m_root;
     }
-private int createTree(ref string tree,int index  = 0,GameNode parent = null)
+    /* 
+private int createTree(int index  = 0,GameNode parent = null)
 {
     //Regex insideOfParentesis  = new Regex(@"\((.*)\)"); 
 
@@ -51,51 +71,42 @@ private int createTree(ref string tree,int index  = 0,GameNode parent = null)
     bool loop = true;
     
     int maxNodeIndex =0;
-    //int childIndex = 0;
+
     while(loop)
     {
         
-       // string tree = tree2.Substring(index+childIndex);
-       //index = index + childIndex;
-        //childIndex =0;
-        maxNodeIndex = tree.Length;
-        Match matchFirstParentesis = firstParentesis.Match(tree,index);
+
+        maxNodeIndex = m_sgf.Length;
+        Match matchFirstParentesis = firstParentesis.Match(m_sgf,index);
         if(matchFirstParentesis.Success)
         {
             maxNodeIndex = matchFirstParentesis.Index;
         }
-        //string partTreeForNodes = tree.Substring(0,maxNodeIndex);
-        
-        //string partOfStringToWorkWith = tree.Substring(0, maxNodeIndex);
-            // Debug.Log("tree lenght: "+ tree.Length +" : "+index + " : "+(maxNodeIndex-index));
-            
-            MatchCollection matches = node.Matches(tree,index);
+
+            MatchCollection matches = node.Matches(m_sgf,index);
             foreach(Match match in matches)
             {
                 if(match.Index+match.Length > maxNodeIndex)
                     break;
                         string value = match.Value;    
-                        GameNode gn = new GameNode(parent,value);
+                        GameNode gn = new GameNode(value);
                         if(parent != null)
-                            parent.addChildren(gn);
+                            parent.AddChildren(gn);
 
                         parent =gn;
                         
             }        
-                
-                        
+                               
         if(matchFirstParentesis.Success)
         {
-
-
-                
+ 
                 string comp = matchFirstParentesis.Value;
                 int childIndex  = maxNodeIndex+1;
                 maxNodeIndex = 0;
                 if(comp == "(")
                 {
                     
-                    index =  createTree(ref tree,childIndex, parent);
+                    index =  createTree(childIndex, parent);
                     
                 }else if(comp == ")")
                 {
@@ -115,7 +126,37 @@ private int createTree(ref string tree,int index  = 0,GameNode parent = null)
     }
     return index;
 }  
-    
+*/
+private int createTreeSimple( ref int index,ref int nodeIndex,GameNode parent = null)
+{
+
+while(nodeIndex <= m_listGameNode.Count)
+{
+    if(m_sgf[index] == 'n')
+    {
+
+        m_listGameNode[nodeIndex].SetParent(parent);
+        parent =m_listGameNode[nodeIndex];
+        nodeIndex =nodeIndex+1;
+        
+    }else if(m_sgf[index] == '(')
+    {
+        index = createTreeSimple(ref index,ref nodeIndex,parent);
+    }else if(m_sgf[index] == ')')
+    {
+        return index+1;
+    }else
+    {
+        Debug.LogError("createTreeSimple Error not n or ( or )");
+        return false;
+    }
+
+
+        index = index+1;
+}
+
+return index;
+}  
 
 
     public string parcourTree(GameNode node)
@@ -158,7 +199,7 @@ private int createTree(ref string tree,int index  = 0,GameNode parent = null)
     }
     public string exportSgf()
     {
-        return "("+MakeSgf(root.GetChidrens()[0])+")";
+        return "("+MakeSgf(m_root.GetChidrens()[0])+")";
     } 
     public bool CompareWithSgf(string sgf)
     {
@@ -171,13 +212,13 @@ private int createTree(ref string tree,int index  = 0,GameNode parent = null)
         }
         return false;
     }
-    private bool ParseSgf(string sgf)
+    private bool ParseSgf()
     {
         
 
-
+  /* 
         Regex game = new Regex(@"GM\[(\d)\]");
-    
+  
         Match match = game.Match(sgf);
         if (match.Success) {
             Debug.Log(match.Groups[1].Value);
@@ -213,10 +254,11 @@ private int createTree(ref string tree,int index  = 0,GameNode parent = null)
 
 
         Regex node = new Regex(@"(\b[A-Z]{1,}\[.*?\]){1,}");
-        root =  new GameNode(null,"root");
-        int firstNodeIndex =node.Match(sgf).Index;
+        */
+        m_root =  m_listGameNode[0];
+        //int firstNodeIndex =node.Match(sgf).Index;
          float start =Time.realtimeSinceStartup;
-        createTree(ref sgf,0,root);
+        createTree(0,m_root);
         float now = Time.realtimeSinceStartup;
         float finish =now-start;
         Debug.Log("createTree take"+finish+"secondes");
