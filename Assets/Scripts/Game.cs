@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Text.RegularExpressions;
@@ -26,96 +27,80 @@ public class Game
     private string user;
     private string annotation;
     private string copyright;
+    private string m_sgf;
+    private string m_baseSgfCleaned;
+    
+    private GameNode m_root;
+    private List<GameNode> m_listGameNode;
+private List<GameNode> CleanSgfForParser()
+{
+    char charToremplaceNode ='n';
+    List<GameNode> listNode = new List<GameNode>();
+    string nodePatern = @"(;[A-Z]{0,2}\[.*?\](?=[\r\n]*;|[\r\n]*\)|[\r\n]*\(|$))";
+    
+    MatchCollection matches = Regex.Matches(m_sgf, nodePatern, RegexOptions.Singleline);
+    foreach(Match m in matches)
+    {
+        listNode.Add(new GameNode(m.Groups[1].Value));
+    }
+    Regex node = new Regex(nodePatern);
+    m_sgf = Regex.Replace(m_sgf,nodePatern,charToremplaceNode.ToString(),RegexOptions.Singleline);
+    Regex returnLine = new Regex(@"\r\n|;");
+    m_sgf = returnLine.Replace(m_sgf,"");
+     return listNode;
+}
 
-    private GameNode root;
+
     public Game(string sgf)
     {
-        ParseSgf(sgf);
+        m_sgf = sgf;
+        m_listGameNode =CleanSgfForParser();
+        ParseSgf();
+        
     }
 
     public GameNode GetRoot()
     {
-        return root;
+        return m_root;
     }
-private int createTree(ref string tree,int index  = 0,GameNode parent = null)
+
+private void createTree( ref int index,ref int nodeIndex,GameNode parent = null)
 {
-    //Regex insideOfParentesis  = new Regex(@"\((.*)\)"); 
 
-  
-    //Regex node = new Regex(@"(;[A-Z].*?\]((?=;)|(?=\()|(?=\))|($)))");
-    Regex node = new Regex(@"(;[A-Z]{1,2}\[.*?\]((?=;)|(?=\()|(?=\))|$))");
-
-    Regex firstParentesis =  new Regex(@"(\()|(\))");
-    //Regex firstParentesis =  new Regex(@"^.*?(\(|\))");
-    
-    bool loop = true;
-    
-    int maxNodeIndex =0;
-    //int childIndex = 0;
-    while(loop)
+while(nodeIndex < m_listGameNode.Count)
+{
+    char c = m_sgf[index];
+    if(c == 'n')
     {
-        
-       // string tree = tree2.Substring(index+childIndex);
-       //index = index + childIndex;
-        //childIndex =0;
-        maxNodeIndex = tree.Length;
-        Match matchFirstParentesis = firstParentesis.Match(tree,index);
-        if(matchFirstParentesis.Success)
+        if(parent != null)
         {
-            maxNodeIndex = matchFirstParentesis.Index;
+            parent.AddChildren(m_listGameNode[nodeIndex]);
         }
-        //string partTreeForNodes = tree.Substring(0,maxNodeIndex);
+        m_listGameNode[nodeIndex].SetParent(parent);
+        parent =m_listGameNode[nodeIndex];
+        nodeIndex =nodeIndex+1;
+        index = index+1;
         
-        //string partOfStringToWorkWith = tree.Substring(0, maxNodeIndex);
-            // Debug.Log("tree lenght: "+ tree.Length +" : "+index + " : "+(maxNodeIndex-index));
-            
-            MatchCollection matches = node.Matches(tree,index);
-            foreach(Match match in matches)
-            {
-                if(match.Index+match.Length > maxNodeIndex)
-                    break;
-                        string value = match.Value;    
-                        GameNode gn = new GameNode(parent,value);
-                        if(parent != null)
-                            parent.addChildren(gn);
-
-                        parent =gn;
-                        
-            }        
-                
-                        
-        if(matchFirstParentesis.Success)
-        {
-
-
-                
-                string comp = matchFirstParentesis.Value;
-                int childIndex  = maxNodeIndex+1;
-                maxNodeIndex = 0;
-                if(comp == "(")
-                {
-                    
-                    index =  createTree(ref tree,childIndex, parent);
-                    
-                }else if(comp == ")")
-                {
-                    return childIndex;
-                }else
-                {
-                    Debug.LogError("Not ( ) found");
-                    return -1;
-                }
-
-            }
-        else
-        { 
-            loop = false;
-        }
-
+    }else if(c == '(')
+    {
+        index = index+1;
+        createTree(ref index,ref nodeIndex,parent);
+    }else if(c == ')')
+    {
+        index = index+1;
+        return;
+    }else
+    {
+        Debug.LogError("createTreeSimple Error not n or ( or )");
+        return;
     }
-    return index;
+
+
+        
+}
+
+return;
 }  
-    
 
 
     public string parcourTree(GameNode node)
@@ -158,7 +143,7 @@ private int createTree(ref string tree,int index  = 0,GameNode parent = null)
     }
     public string exportSgf()
     {
-        return "("+MakeSgf(root.GetChidrens()[0])+")";
+        return "("+MakeSgf(m_root)+")";
     } 
     public bool CompareWithSgf(string sgf)
     {
@@ -171,13 +156,13 @@ private int createTree(ref string tree,int index  = 0,GameNode parent = null)
         }
         return false;
     }
-    private bool ParseSgf(string sgf)
+    private bool ParseSgf()
     {
         
-
-
+  
+  /* 
         Regex game = new Regex(@"GM\[(\d)\]");
-    
+  
         Match match = game.Match(sgf);
         if (match.Success) {
             Debug.Log(match.Groups[1].Value);
@@ -213,13 +198,13 @@ private int createTree(ref string tree,int index  = 0,GameNode parent = null)
 
 
         Regex node = new Regex(@"(\b[A-Z]{1,}\[.*?\]){1,}");
-        root =  new GameNode(null,"root");
-        int firstNodeIndex =node.Match(sgf).Index;
-         float start =Time.realtimeSinceStartup;
-        createTree(ref sgf,0,root);
-        float now = Time.realtimeSinceStartup;
-        float finish =now-start;
-        Debug.Log("createTree take"+finish+"secondes");
+        */
+        m_root =  m_listGameNode[0];
+        //int firstNodeIndex =node.Match(sgf).Index;
+        int startNode =0;
+        int index =0;
+        createTree(ref index,ref startNode);
+
         //CompareWithSgf(sgf,root);
         //Debug.Log(MakeSgf(root));
 

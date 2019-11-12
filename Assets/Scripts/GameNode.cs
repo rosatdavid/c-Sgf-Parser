@@ -9,9 +9,9 @@ public class GameNode
     private string value;
     private string color;
     public string position;
-    public GameNode(GameNode p,string val)
+    public GameNode(string val)
     {
-        parent = p;
+        
         value = val;
 //        Match colorandpos = new Regex(@"(B|W)\[(.*?)\]").Match(val);
 
@@ -35,8 +35,12 @@ public class GameNode
     {
         return value;
     }
-    public void addChildren(GameNode ch)
+    public void AddChildren(GameNode ch)
     {
         childrens.Add(ch);
+    }
+    public void SetParent(GameNode p)
+    {
+        parent = p;
     }
 }
