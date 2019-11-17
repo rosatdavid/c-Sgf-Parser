@@ -29,7 +29,7 @@ public class Board : MonoBehaviour {
     private Dictionary<Point, int> _dic_obstacles;
     public int _nb_tiles_largeur = 9;
     public int _nb_tiles_hauteur = 9;
-
+    List<LineRenderer> listLinesBoard;
     private LibFever.Plane _plane_texture;
     private LibFever.Plane _plane_collider;
 
@@ -37,9 +37,12 @@ public class Board : MonoBehaviour {
     SpriteRenderer _spriteRender;
     Texture2D _textu;
     //MeshCollider _collider;
-
+    public float lineBordureWidth = 0.03f;
+    public float lineInsideWidth = 0.01f;
+    public float linedistanceFromBoard = 0.01f;
     [HideInInspector]
     public LibFever.Grid _grille;
+    public GameObject lineHolder;
     LibFever.Node[,] _graph;
 
     GameManager gameManager;
@@ -58,12 +61,54 @@ public class Board : MonoBehaviour {
         Debug.Log("grille exactSeting min " + _grille.plane.min + " max " + _grille.plane.max + "_nb_tiles_hauteur " +_nb_tiles_hauteur + "nb_tiles_largeur" +_nb_tiles_largeur);
 
     }
+
+    void DrawBoard()
+    {
+        listLinesBoard = new List<LineRenderer>();
+        GameObject go = GameObject.Instantiate(lineHolder,this.transform);
+        go.transform.position = go.transform.position + new Vector3(0f,0f,linedistanceFromBoard);
+        LineRenderer line = go.GetComponent<LineRenderer>();
+        //go.transform.parent = this.transform;
+        line.loop = true;
+        line.startWidth = lineBordureWidth;
+        line.SetVertexCount(4);
+        line.SetPosition(0,Grid.GetPosInWorld(_grille,new Point(0,0)));
+        line.SetPosition(1,Grid.GetPosInWorld(_grille,new Point(0,_nb_tiles_hauteur-1)));
+        line.SetPosition(2,Grid.GetPosInWorld(_grille,new Point(_nb_tiles_largeur-1,_nb_tiles_hauteur-1)));
+        line.SetPosition(3,Grid.GetPosInWorld(_grille,new Point(_nb_tiles_largeur-1,0)));
+      
+        listLinesBoard.Add(line);
+        for(int y = 1;y < _nb_tiles_hauteur;y++)
+        {
+        LineRenderer l = new LineRenderer();
+            go = GameObject.Instantiate(lineHolder,this.transform);
+            go.transform.position = go.transform.position + new Vector3(0f,0f,linedistanceFromBoard);
+            line = go.GetComponent<LineRenderer>();
+            listLinesBoard.Add(line);
+            line.startWidth = lineInsideWidth;
+            line.SetPosition(0,Grid.GetPosInWorld(_grille,new Point(0,y)));
+            line.SetPosition(1,Grid.GetPosInWorld(_grille,new Point(_nb_tiles_largeur-1,y)));
+        }
+        for(int x = 1;x< _nb_tiles_largeur;x++)
+        {
+            LineRenderer l = new LineRenderer();
+            go = GameObject.Instantiate(lineHolder,this.transform);
+            go.transform.position = go.transform.position + new Vector3(0f,0f,linedistanceFromBoard);
+            line = go.GetComponent<LineRenderer>();
+            line.startWidth = lineInsideWidth;
+            listLinesBoard.Add(line);
+            line.SetPosition(0,Grid.GetPosInWorld(_grille,new Point(x,0)));
+            line.SetPosition(1,Grid.GetPosInWorld(_grille,new Point(x,_nb_tiles_hauteur-1)));
+
+        }
+    }
+
     void DebugGrid(LibFever.Grid g)
     {
 
-        for (int y = 0; y < g.nb_tiles.y; y++)
+        for (int y = 1; y < g.nb_tiles.y; y++)
         {
-            for (int x = 0; x < g.nb_tiles.x; x++)
+            for (int x = 1; x < g.nb_tiles.x; x++)
             {
                 GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 Vector3 posCube = LibFever.Grid.GetPosInWorld(g, new Point(x, y), _pos_z);
@@ -154,7 +199,8 @@ public class Board : MonoBehaviour {
 
         }
         //_graph = LibFever.Node.GenerateGraph(_grille, _dic_obstacles);
-        DebugGrid(_grille);
+        //DebugGrid(_grille);
+        DrawBoard();
     }
 
     // Update is called once per frame
@@ -177,26 +223,7 @@ public class Board : MonoBehaviour {
 
                 Debug.Log("Case : " + index);
 
-                List<LibFever.Node> path = LibFever.PathFinding.Astar(_graph, _player_start_pos.x, _player_start_pos.y, index.x, index.y);
-                if (path != null)
-                {
-                    if (path.Count > 0)
-                    {
-                        Node fin = path[0];
 
-                        for (int i = path.Count - 1; i > 0; i--)
-                        {
-                            Vector3 pos_cur = Grid.GetPosInWorld(_grille, new Point(path[i].X, path[i].Y), _pos_z);
-                            Vector3 pos_cur_next = Grid.GetPosInWorld(_grille, new Point(path[i - 1].X, path[i - 1].Y), _pos_z);
-                            Debug.DrawLine(pos_cur, pos_cur_next, Color.red, 1f, false);
-                        }
-
-                        Debug.Log("Answer:" + fin.X + " " + fin.Y);
-                        Teleport(_moveTest, new Point(fin.X, fin.Y), _pos_z);
-                        _player_start_pos = new Point(fin.X, fin.Y);
-                        Debug.Log("moveTest.position : " + _moveTest.position);
-                    }
-                }
 
 
             }

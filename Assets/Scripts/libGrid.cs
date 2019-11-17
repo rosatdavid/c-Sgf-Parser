@@ -282,7 +282,7 @@ namespace LibFever
 
         public static DataStructures.Point getCaseIndex(Grid grid, Vector3 targ)
         {
-            return getCaseIndex(grid, new Vector2(targ.x, targ.z));
+            return getCaseIndex(grid, new Vector2(targ.x, targ.y));
         }
         public static DataStructures.Point getCaseIndex(Grid grid, Vector2 targ)
         {

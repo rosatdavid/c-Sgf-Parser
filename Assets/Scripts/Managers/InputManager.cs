@@ -15,8 +15,6 @@ using Grid = LibFever.Grid;
             Ray ray = cam.ScreenPointToRay(mouse_pos);
             if (Physics.Raycast(ray, out hit, 100.0f, mask))
             {
-                
-
                 Debug.Log("hit : " + hit.point);
                 board_index = LibFever.Grid.getCaseIndex(grille, hit.point);
                 Debug.Log("index : " + board_index);

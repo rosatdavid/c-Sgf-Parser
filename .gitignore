@@ -87,3 +87,8 @@ Assets/Scripts/libGrid.cs.meta
 Assets/Scripts/Managers.meta
 Assets/Scripts/Sprites.meta
 Assets/Scenes/SampleScene.unity
+Assets/Scenes/SampleScene.unity
+Assets/Prefabs.meta
+Assets/Prefabs/LineHolder.prefab
+Assets/Prefabs/LineHolder.prefab.meta
+Assets/Scenes/SampleScene.unity
