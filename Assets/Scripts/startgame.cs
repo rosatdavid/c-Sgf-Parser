@@ -56,7 +56,7 @@ private string OpenSgfFile(string fileName)
         {
             Debug.LogError("tests Dosent pass");
         }
-      
+       
         float start =Time.realtimeSinceStartup;
         string sgf = OpenSgfFile(@"Kogo's Joseki Dictionary.sgf");
         Game game = new Game(sgf);
