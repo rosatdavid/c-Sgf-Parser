@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Text.RegularExpressions;
+using System.Linq;
 public class GameNode
 {
     private GameNode parent;
@@ -9,14 +10,26 @@ public class GameNode
     private string value;
     private string color;
     public string position;
-    public GameNode(string val)
+    private static string elementOfNodePatern = @"(?<key>[A-Z]{1,2})(\[(?<value>.*?)\]){1,}(?=[A-Z]{1,2}|$)";   //@"(?<key>[A-Z]{0,2})\[(?<value>.*?)\]";
+    private Dictionary<string,string> property = new Dictionary<string,string>();
+    public GameNode(string  val)
     {
-        
         value = val;
-//        Match colorandpos = new Regex(@"(B|W)\[(.*?)\]").Match(val);
+         property = Regex.Matches(value, elementOfNodePatern, RegexOptions.Singleline).Cast<Match>().ToDictionary(m => m.Groups["key"].Value,m => m.Groups["value"].Value);
+        
+        try
+        {   
+            position =property["B"];
+            color = "B";
+        }
+        catch{}
 
-        color =  "PLACE HOLDER"; //colorandpos.Groups[1].Value;
-        position ="PLACE HOLDER";//colorandpos.Groups[2].Value;
+        try
+        {   
+            position =property["W"];
+            color = "W";
+        }
+        catch{}
         childrens = new List<GameNode>();
     }
     public GameNode GetParent()

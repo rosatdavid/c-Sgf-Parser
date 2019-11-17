@@ -20,9 +20,7 @@ public class startgame : MonoBehaviour
                Debug.LogError("test failed :"+testSgf);
                 ret = false;
             }
-
         }
-
         return ret;
     }
 
@@ -37,8 +35,7 @@ private string OpenSgfFile(string fileName)
     {
         Debug.Log(Ex.ToString());
     }
-    
-       //content = Regex.Replace(content, @"\t\n\r", "");
+
        Debug.Log(content);
        return content;
 }
@@ -50,7 +47,6 @@ private string OpenSgfFile(string fileName)
        testsSgf.Add("(;GM[1]FF[4]CA[UTF-8]AP[Sabaki:0.43.3]KM[7.5]SZ[19]DT[2019-11-06];B[as];W[ar];B[aq](;W[ap])(;W[bq](;B[bp];W[bo];B[bn])(;B[cq];W[cp](;B[co];W[cn])(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn])))(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))))(;B[cq];W[cp](;B[co];W[cn])(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn])))(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn])))))(;W[bq](;B[bp];W[bo];B[bn])(;B[cq];W[cp](;B[co];W[cn])(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn])))(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))))(;B[cq];W[cp](;B[co];W[cn])(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn])))(;B[dq](;W[dp];B[do];W[dn];B[dm])(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))(;W[ep];B[eo](;W[en];B[em])(;W[fp];B[fo];W[fn]))))))");
        testsSgf.Add(OpenSgfFile(@"KogoJosekiDictionary.sgf"));
 
-        //OpenSgfFile();
 
         bool passingTests = Tests();
        if(passingTests)
@@ -59,37 +55,26 @@ private string OpenSgfFile(string fileName)
         }else
         {
             Debug.LogError("tests Dosent pass");
-            
         }
       
-                
-        
-    float start =Time.realtimeSinceStartup;
+        float start =Time.realtimeSinceStartup;
+        string sgf = OpenSgfFile(@"Kogo's Joseki Dictionary.sgf");
+        Game game = new Game(sgf);
+        float now = Time.realtimeSinceStartup;
+        float finish =now-start;
+        Debug.Log("create gametree take : "+finish+" secondes");
 
-    string sgf = OpenSgfFile(@"Kogo's Joseki Dictionary.sgf");
+        string finalSgf =game.exportSgf();
 
-
-    Game game = new Game(sgf);
-
-    float now = Time.realtimeSinceStartup;
-    float finish =now-start;
-    Debug.Log("create gametree take : "+finish+" secondes");
-
-    string finalSgf =game.exportSgf();
-
-    try
-    {   
-        System.IO.File.WriteAllText(@"export.sgf",finalSgf);
+        try
+        {   
+            System.IO.File.WriteAllText(@"export.sgf",finalSgf);
+        }
+        catch (Exception Ex)
+        {
+            Debug.Log(Ex.ToString());
+        }
     }
-    catch (Exception Ex)
-    {
-        Debug.Log(Ex.ToString());
-    }
-        
-    
- 
- 
- }
     // Update is called once per frame
     void Update()
     {

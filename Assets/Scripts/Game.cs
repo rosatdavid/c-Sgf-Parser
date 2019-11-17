@@ -32,23 +32,24 @@ public class Game
     
     private GameNode m_root;
     private List<GameNode> m_listGameNode;
-private List<GameNode> CleanSgfForParser()
-{
-    char charToremplaceNode ='n';
-    List<GameNode> listNode = new List<GameNode>();
-    string nodePatern = @"(;[A-Z]{0,2}\[.*?\](?=[\r\n]*;|[\r\n]*\)|[\r\n]*\(|$))";
-    
-    MatchCollection matches = Regex.Matches(m_sgf, nodePatern, RegexOptions.Singleline);
-    foreach(Match m in matches)
+    private List<GameNode> CleanSgfForParser()
     {
-        listNode.Add(new GameNode(m.Groups[1].Value));
+        char charToremplaceNode ='n';
+        List<GameNode> listNode = new List<GameNode>();
+        string nodePatern = @"(;[A-Z]{0,2}\[.*?\](?=[\r\n]*;|[\r\n]*\)|[\r\n]*\(|$))"; //Find all node from string
+        
+        MatchCollection matches = Regex.Matches(m_sgf, nodePatern, RegexOptions.Singleline);
+        foreach(Match m in matches)
+        {
+            listNode.Add(new GameNode(m.Groups[1].Value));
+        }
+
+        Regex node = new Regex(nodePatern);
+        m_sgf = Regex.Replace(m_sgf,nodePatern,charToremplaceNode.ToString(),RegexOptions.Singleline);
+        Regex returnLine = new Regex(@"\r\n|;"); //remove all return of line and empty Node
+        m_sgf = returnLine.Replace(m_sgf,"");
+        return listNode;
     }
-    Regex node = new Regex(nodePatern);
-    m_sgf = Regex.Replace(m_sgf,nodePatern,charToremplaceNode.ToString(),RegexOptions.Singleline);
-    Regex returnLine = new Regex(@"\r\n|;");
-    m_sgf = returnLine.Replace(m_sgf,"");
-     return listNode;
-}
 
 
     public Game(string sgf)
@@ -56,7 +57,6 @@ private List<GameNode> CleanSgfForParser()
         m_sgf = sgf;
         m_listGameNode =CleanSgfForParser();
         ParseSgf();
-        
     }
 
     public GameNode GetRoot()
@@ -67,39 +67,35 @@ private List<GameNode> CleanSgfForParser()
 private void createTree( ref int index,ref int nodeIndex,GameNode parent = null)
 {
 
-while(nodeIndex < m_listGameNode.Count)
-{
-    char c = m_sgf[index];
-    if(c == 'n')
+    while(nodeIndex < m_listGameNode.Count)
     {
-        if(parent != null)
+        char c = m_sgf[index];
+        if(c == 'n')
         {
-            parent.AddChildren(m_listGameNode[nodeIndex]);
-        }
-        m_listGameNode[nodeIndex].SetParent(parent);
-        parent =m_listGameNode[nodeIndex];
-        nodeIndex =nodeIndex+1;
-        index = index+1;
-        
-    }else if(c == '(')
-    {
-        index = index+1;
-        createTree(ref index,ref nodeIndex,parent);
-    }else if(c == ')')
-    {
-        index = index+1;
-        return;
-    }else
-    {
-        Debug.LogError("createTreeSimple Error not n or ( or )");
-        return;
+            if(parent != null)
+            {
+                parent.AddChildren(m_listGameNode[nodeIndex]);
+            }
+            m_listGameNode[nodeIndex].SetParent(parent);
+            parent =m_listGameNode[nodeIndex];
+            nodeIndex =nodeIndex+1;
+            index = index+1;
+            
+        }else if(c == '(')
+        {
+            index = index+1;
+            createTree(ref index,ref nodeIndex,parent);
+        }else if(c == ')')
+        {
+            index = index+1;
+            return;
+        }else
+        {
+            Debug.LogError("createTreeSimple Error not n or ( or )");
+            return;
+        }          
     }
-
-
-        
-}
-
-return;
+    return;
 }  
 
 
@@ -107,14 +103,12 @@ return;
     {
         string retour;
         List<GameNode> childrens = node.GetChidrens();
-        Debug.Log("Node :"+node.GetValue() +"has "+childrens.Count+" childs");
         retour =node.GetValue();
         if(childrens.Count > 1)
         {
             foreach (var ch in childrens)
             {
-
-            retour = retour + "(" +parcourTree(ch) +")";
+                retour = retour + "(" +parcourTree(ch) +")";
             }
         }else if(childrens.Count == 1)
         {
@@ -126,14 +120,12 @@ return;
     {
         string retour;
         List<GameNode> childrens = node.GetChidrens();
-       // Debug.Log("Node :"+node.GetValue() +"has "+childrens.Count+" childs");
         retour =node.GetValue();
         if(childrens.Count > 1)
         {
             foreach (var ch in childrens)
             {
-
-            retour = retour + "(" +MakeSgf(ch) +")";
+                retour = retour + "(" +MakeSgf(ch) +")";
             }
         }else if(childrens.Count == 1)
         {
@@ -148,7 +140,6 @@ return;
     public bool CompareWithSgf(string sgf)
     {
         string finalsgf =exportSgf();
-       // Debug.Log(finalsgf);
         if (finalsgf == sgf)
         {
              Debug.Log("input and output match");
