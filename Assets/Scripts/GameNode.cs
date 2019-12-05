@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Text.RegularExpressions;
 using System.Linq;
+
 public class GameNode
 {
     private GameNode parent;
     private List<GameNode> childrens;
     private string value;
     private string color;
-    public string position;
+    private string position;
+    private Game.Variation _variation;
+
     private static string elementOfNodePatern = @"(?<key>[A-Z]{1,2})(\[(?<value>.*?)\]){1,}(?=[A-Z]{1,2}|$)";   //@"(?<key>[A-Z]{0,2})\[(?<value>.*?)\]";
     private Dictionary<string,string> property = new Dictionary<string,string>();
     public GameNode(string  val)
@@ -31,6 +34,14 @@ public class GameNode
         }
         catch{}
         childrens = new List<GameNode>();
+    }
+    public void SetVariation(Game.Variation variation)
+    {
+        _variation =variation;
+    }
+    public Game.Variation GetVariation()
+    {
+        return _variation;
     }
     public GameNode GetParent()
     {

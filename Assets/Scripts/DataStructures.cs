@@ -84,6 +84,14 @@ namespace DataStructures
             hash = (hash * 7) + x.GetHashCode();
             return hash;
         }
+        public static Point operator -(Point n1, Point n2)
+        {
+            return new Point(n1.x-n2.x,n1.y-n2.y); 
+        } 
+        public static Point operator +(Point n1, Point n2)
+        {
+            return new Point(n1.x+n2.x,n1.y+n2.y); 
+        } 
     }
 
     class Pair<T>

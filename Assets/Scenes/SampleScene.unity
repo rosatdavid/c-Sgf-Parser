@@ -401,8 +401,8 @@ MonoBehaviour:
   - marker_type: 0
     prefabs: []
   _obstacles: []
-  _nb_tiles_largeur: 9
-  _nb_tiles_hauteur: 9
+  _nb_tiles_largeur: 19
+  _nb_tiles_hauteur: 19
   _gride_material: {fileID: 0}
   lineBordureWidth: 0.03
   lineInsideWidth: 0.01

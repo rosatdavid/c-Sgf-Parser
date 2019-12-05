@@ -97,8 +97,48 @@ private void createTree( ref int index,ref int nodeIndex,GameNode parent = null)
     }
     return;
 }  
+        public class Variation
+        {
+            static List<Variation> allVariation = new List<Variation>();
+            public static ref List<Variation> GetVariations()
+            {
+                return ref allVariation;
+            }
+            private List<GameNode> _nodes;
+            GameNode _parent;
+            
+
+            public Variation(GameNode parent) // maybe need ref
+            {
+                _parent = parent;
+                _nodes = new List<GameNode>();
+                allVariation.Add(this);
+            }
+            public void AddNode(GameNode gn)
+            {
+                _nodes.Add(gn);
+            }
+            public int GetLength()
+            {
+                return  _nodes.Count;
+            }
 
 
+        }
+    public void InitVariations(GameNode node,Variation currentVar)
+    {
+        List<GameNode> childrens = node.GetChidrens();
+        node.SetVariation(currentVar);
+        currentVar.AddNode(node);
+        if(childrens.Count >0)
+        {
+            InitVariations(childrens[0],currentVar);
+            for(int i=1; i<childrens.Count ;i++)
+            {
+                InitVariations(childrens[i],new Variation(node));
+            }
+        }
+    }
     public string parcourTree(GameNode node)
     {
         string retour;
@@ -195,7 +235,8 @@ private void createTree( ref int index,ref int nodeIndex,GameNode parent = null)
         int startNode =0;
         int index =0;
         createTree(ref index,ref startNode);
-
+        
+        InitVariations(m_root,new Variation(null));
         //CompareWithSgf(sgf,root);
         //Debug.Log(MakeSgf(root));
 
